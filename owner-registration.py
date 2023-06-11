@@ -10,6 +10,11 @@ import subprocess
 from tkinter import messagebox
 import tkinter.messagebox as MessageBox
 import mysql.connector as mysql
+from tkinter import *
+from tkinter import filedialog
+from PIL import Image, ImageTk
+import cv2 as cv
+import numpy as np
 
 
 tela = Tk()
@@ -36,24 +41,47 @@ lbl_foto_Profile.place(x=50, y=50)
 pasta_inicial = ""
 
 #função para escolher imagem
-def escolher_imagem(): #inicio da função
+def escolher_imagem():
+    global image_path
+    global image
+    global rotated_image
+    
     caminho_imagem = filedialog.askopenfilename(initialdir=pasta_inicial, title="Escolha uma imagem",
                                                 filetypes=(("Arquivos de imagem", "*.jpg;*.jpeg;*.png"),
-                                                           ("Todos os arquivos", "*.*"))) #localização do arquivo e tipos a serem utilizados
-    imagem_pil = Image.open(caminho_imagem) #abertura do arquivo atraves do PIL
+                                                           ("Todos os arquivos", "*.*")))
+    imagem_pil = Image.open(caminho_imagem)
     largura, altura = imagem_pil.size
     if largura > 150:
         proporcao = largura/150
         nova_altura = int(altura/proporcao)
-        imagem_pil = imagem_pil.resize((110, nova_altura)) #redimensionamento da imagem
-    imagem_tk = ImageTk.PhotoImage(imagem_pil) #convertendo a imagem para formato compativel com o Tkinter
-    lbl_imagem = Label(tela, image=imagem_tk) 
-    lbl_imagem.image = imagem_tk #a imagem escolhida será armaznada em uma label
-    lbl_imagem.place(x=50, y=50)
+        imagem_pil = imagem_pil.resize((110, nova_altura))
+    image = cv.cvtColor(np.array(imagem_pil), cv.COLOR_RGB2BGR)
+    rotated_image = np.copy(image)
+    show_image(rotated_image)
+
+#função para girar imagem
+def rotate_image():
+    global rotated_image
+    angle = 45
+    rotated_image = cv.rotate(rotated_image, cv.ROTATE_90_CLOCKWISE)
+    show_image(rotated_image)
+
+def show_image(image):
+    image_pil = Image.fromarray(cv.cvtColor(image, cv.COLOR_BGR2RGB))
+    image_tk = ImageTk.PhotoImage(image_pil)
+    lbl_imagem.configure(image=image_tk)
+    lbl_imagem.image = image_tk
+
 
 #botao chamando a função escolher_imagem
 btn_escolher = Button(tela, text="Escolher imagem", command=escolher_imagem)
 btn_escolher.place(x=55, y=210)
+
+btn_rotate = Button(tela, text="Girar imagem", command=rotate_image)
+btn_rotate.place(x=65, y=250)
+
+lbl_imagem = Label(tela)
+lbl_imagem.place(x=50, y=50)
 
 #campos de cadastro
 lbl_titulo = Label(tela, text="Cadastro do cliente").place(x=400, y=10)

@@ -1,41 +1,62 @@
 from tkinter import *
-from tkinter import ttk
-import subprocess
+from tkinter import filedialog
+from PIL import Image, ImageTk
+import cv2 as cv
+import numpy as np
 
 tela = Tk()
+tela.title("Cadastro do Cliente")
+tela.configure(background='#d3d3d3')
+tela.geometry("800x500")
+tela.resizable(False,False)
+largura = 900
+altura = 500
 
-tela.geometry("500x500")
+fotoOriginal = Image.open("imgs/profile-owner.png")
+fotoResize = fotoOriginal.resize((110, 150))
+fotoPerfil = ImageTk.PhotoImage(fotoResize)
+lbl_foto_Profile = Label(bg="#FFFFFF", image=fotoPerfil)
+lbl_foto_Profile.place(x=50, y=50)
 
-#comboBox especies
+pasta_inicial = ""
 
-list_especies = ["Gato", "Cachorro"]
+def escolher_imagem():
+    global image_path
+    global image
+    global rotated_image
+    
+    caminho_imagem = filedialog.askopenfilename(initialdir=pasta_inicial, title="Escolha uma imagem",
+                                                filetypes=(("Arquivos de imagem", "*.jpg;*.jpeg;*.png"),
+                                                           ("Todos os arquivos", "*.*")))
+    imagem_pil = Image.open(caminho_imagem)
+    largura, altura = imagem_pil.size
+    if largura > 150:
+        proporcao = largura/150
+        nova_altura = int(altura/proporcao)
+        imagem_pil = imagem_pil.resize((110, nova_altura))
+    image = cv.cvtColor(np.array(imagem_pil), cv.COLOR_RGB2BGR)
+    rotated_image = np.copy(image)
+    show_image(rotated_image)
 
-lbl_especies = Label(tela, text="Especies")
-lbl_especies.place(x=50, y=50)
+def rotate_image():
+    global rotated_image
+    angle = 45
+    rotated_image = cv.rotate(rotated_image, angle)
+    show_image(rotated_image)
 
-cb_especies = ttk.Combobox(tela, values=list_especies)
-cb_especies.set("Cachorro")
-cb_especies.place(x=50, y=80)
+def show_image(image):
+    image_pil = Image.fromarray(cv.cvtColor(image, cv.COLOR_BGR2RGB))
+    image_tk = ImageTk.PhotoImage(image_pil)
+    lbl_imagem.configure(image=image_tk)
+    lbl_imagem.image = image_tk
 
-#radio_especies
+btn_escolher = Button(tela, text="Escolher imagem", command=escolher_imagem)
+btn_escolher.place(x=55, y=210)
 
-#criando botao radio da especie
-lbl_especie = Label(tela, text="Espécie", bg="#d3d3d3").place(x=200, y=150)
-var2=StringVar()
-var2.set("c")
-rdb_btn_c = Radiobutton(tela, text="Cachorro", variable=var2, value="c", bg="#d3d3d3")
-rdb_btn_g = Radiobutton(tela, text="Gato", variable=var2, value="g", bg="#d3d3d3")
-rdb_btn_c.place(x=200, y=170)
-rdb_btn_g.place(x=290, y=170)
+btn_rotate = Button(tela, text="Rotate", command=rotate_image)
+btn_rotate.place(x=55, y=250)
 
-#campo de descriçao Text
-Label(tela, text="Descrição").place(x=50, y=300)
-descricao = Text(tela).place(x=50, y=330, width=300, height=100)
-
-def abrir_tela_animais():
-    subprocess.run(["python", "pet-registration.py"])
-
-btn_botao = Button(tela, text="Redirecionar", command=abrir_tela_animais)
-btn_botao.pack()
+lbl_imagem = Label(tela)
+lbl_imagem.place(x=50, y=50)
 
 tela.mainloop()
