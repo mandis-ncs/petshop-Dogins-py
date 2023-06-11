@@ -34,6 +34,7 @@ barra_menus = Menu(tela)
 opcoes_menus_arquivos = Menu(barra_menus) #associando ao Menu(barra_menus)
 opcoes_menus_gestao = Menu(barra_menus)
 opcoes_novo = Menu(opcoes_menus_arquivos) #associando submenu a opcao 'Arquivo'
+opcoes_servico = Menu(opcoes_menus_arquivos)
 
 #adicionando label 'Arquivo' na barra
 barra_menus.add_cascade(label="Arquivo", menu=opcoes_menus_arquivos)
@@ -50,14 +51,20 @@ barra_menus.add_cascade(label="Gestao", menu=opcoes_menus_gestao)
 #criando sub menus de 'Gestao'
 opcoes_menus_gestao.add_command(label="Animais", command=abrir_tela_animais)
 opcoes_menus_gestao.add_command(label="Clientes", command=abrir_tela_clientes)
-opcoes_menus_gestao.add_command(label="Serviços", command=abrir_tela_servicos)
+opcoes_menus_gestao.add_cascade(label="Serviços", menu=opcoes_servico)
 
 #criando opcoes dentro do sub menu 'Novo'
 opcoes_novo.add_command(label="Salvar Imagem")
 opcoes_novo.add_command(label="Upload de arquivos")
 
+#criando opcoes dentro do sub menu 'Serviços'
+opcoes_servico.add_command(label="Agendar serviço", command=abrir_tela_agendamento) 
+opcoes_servico.add_command(label="Cadastrar novo serviço", command=abrir_tela_servicos)
+
 #adicionando configuracao do menu a tela principal
 tela.config(menu=barra_menus)
+
+lbl_titulo = Label(tela, text="Menu do Petshop").place(x=250, y=20)
 
 #adicionando botoes ao menu
 foto_logo_org= Image.open("imgs/Logo.png")
@@ -83,6 +90,7 @@ btn_dono.place(x=200, y=80)
 btn_servico = Button(tela, text="Cadastrar serviço", image=foto_servico, compound=TOP, command=abrir_tela_servicos)
 btn_servico.place(x=320, y=80)
 
+lbl_new = Label(tela, text="**new feature",  background='#d3d3d3').place(x=450, y=55)
 btn_sair = Button(tela, text="Agendar serviço", image=foto_calendario, compound=TOP, command=abrir_tela_agendamento)
 btn_sair.place(x=440, y=80)
 
