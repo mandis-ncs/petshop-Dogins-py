@@ -2,19 +2,13 @@
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
-from tkinter import *
-from tkinter import filedialog
-from PIL import Image, ImageTk
 from tkinter import ttk
 import subprocess
-from tkinter import messagebox
 import tkinter.messagebox as MessageBox
 import mysql.connector as mysql
-from tkinter import *
-from tkinter import filedialog
-from PIL import Image, ImageTk
 import cv2 as cv
 import numpy as np
+
 
 
 tela = Tk()

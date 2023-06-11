@@ -5,6 +5,9 @@ from tkinter import ttk
 import subprocess
 import tkinter.messagebox as MessageBox
 import mysql.connector as mysql
+import cv2 as cv
+import numpy as np
+
 tela = Tk()
 
 def sair_tela():
