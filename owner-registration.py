@@ -2,8 +2,15 @@
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
+from tkinter import *
+from tkinter import filedialog
+from PIL import Image, ImageTk
+from tkinter import ttk
 import subprocess
-#PIL permite importar imgs externas
+from tkinter import messagebox
+import tkinter.messagebox as MessageBox
+import mysql.connector as mysql
+
 
 tela = Tk()
 
@@ -111,10 +118,120 @@ txt_bairro = Entry(tela, width=30, borderwidth=1, fg="blue", bg="white")
 lbl_bairro.place(x=560, y=200)
 txt_bairro.place(x=560, y=220)
 
-lbl_bairro = Label(tela, text="Rua", bg="#d3d3d3")
-txt_bairro = Entry(tela, width=50, borderwidth=1, fg="blue", bg="white")
-lbl_bairro.place(x=200, y=250)
-txt_bairro.place(x=200, y=270)
+lbl_rua = Label(tela, text="Rua", bg="#d3d3d3")
+txt_rua = Entry(tela, width=50, borderwidth=1, fg="blue", bg="white")
+lbl_rua.place(x=200, y=250)
+txt_rua.place(x=200, y=270)
+
+
+# Função para salvar
+def salvar():
+    var_codigo = txt_codigo.get()
+    var_nome_cliente = txt_nome_cliente.get()
+    var_data_atualizacao = txt_data_atualizacao.get()
+    var_data_cadastro = txt_data_cadastro.get()
+    var_cpf = txt_cpf.get()
+    var_nascimento = txt_nascimento.get()
+    var_idade = txt_idade.get()
+    var_telefone = txt_telefone.get()
+    var_celular = txt_celular.get()
+    var_cep = txt_cep.get()
+    var_cidade = txt_cidade.get()
+    var_bairro = txt_bairro.get()
+    var_rua = txt_rua.get()
+
+    if (var_nome_cliente == "" or var_cpf == ""):
+        messagebox.showinfo("Erro", "Há campos em branco")
+    else:
+        conectar = mysql.connect(host="localhost", user="root", password="", database="dogins")
+        cursor = conectar.cursor()
+        cursor.execute(f"INSERT INTO dono (codigo_cliente, nome_cliente, data_atualizacao, data_cadastro, cpf, data_nascimento, idade, telefone, celular, cep, cidade, bairro, rua) VALUES ('{var_codigo}','{var_nome_cliente}','{var_data_atualizacao}', '{var_data_cadastro}', '{var_cpf}', '{var_nascimento}', '{var_idade}', '{var_telefone}', '{var_celular}', '{var_cep}', '{var_cidade}', '{var_bairro}', '{var_rua}')")
+        cursor.execute("commit")
+        messagebox.showinfo("Mensagem", "Cadastro Realizado com Sucesso")
+        conectar.close()
+
+
+# Função para excluir
+def excluir():
+    if (txt_codigo.get() == ""):
+        messagebox.showinfo("ALERTA", "Digite o código para deletar")
+    else:
+        conectar = mysql.connect(host="localhost", user="root", password="", database="dogins")
+        cursor = conectar.cursor()
+        cursor.execute("DELETE FROM dono WHERE codigo_cliente='" + txt_codigo.get() + "'")
+        cursor.execute("commit")
+        messagebox.showinfo("Mensagem", "Informação Excluída com Sucesso")
+        conectar.close()
+
+
+def atualizar():
+    var_codigo = txt_codigo.get()
+    var_nome_cliente = txt_nome_cliente.get()
+    var_data_atualizacao = txt_data_atualizacao.get()
+    var_data_cadastro = txt_data_cadastro.get()
+    var_cpf = txt_cpf.get()
+    var_nascimento = txt_nascimento.get()
+    var_idade = txt_idade.get()
+    var_telefone = txt_telefone.get()
+    var_celular = txt_celular.get()
+    var_cep = txt_cep.get()
+    var_cidade = txt_cidade.get()
+    var_bairro = txt_bairro.get()
+    var_rua = txt_rua.get()
+
+    if (var_nome_cliente == "" or var_cpf == ""):
+        MessageBox.showinfo("ALERTA", "Campos obrigatórios vazios")
+    else:
+        conectar = mysql.connect(host="localhost", user="root", password="", database="dogins")
+        cursor = conectar.cursor()
+        cursor.execute("UPDATE cliente SET nome_cliente = %s, data_atualizacao = %s, data_cadastro = %s, cpf = %s, nascimento = %s, idade = %s, telefone = %s, celular = %s, cep = %s, cidade = %s, bairro = %s, rua = %s WHERE codigo = %s",
+                       (var_nome_cliente, var_data_atualizacao, var_data_cadastro, var_cpf, var_nascimento, var_idade, var_telefone, var_celular, var_cep, var_cidade, var_bairro, var_rua, var_codigo))
+        conectar.commit()
+        MessageBox.showinfo("Status", "Informação Atualizada com Sucesso")
+        conectar.close()
+
+
+#select para pesquisar
+def Select():
+    if (txt_codigo.get() == ""):
+        messagebox.showinfo("ALERTA", "Por favor, digite o código.")
+    else:
+        conectar = mysql.connect(host="localhost", user="root", password="", database="dogins")
+        cursor = conectar.cursor()
+        cursor.execute("SELECT * FROM pet WHERE codigo='" + txt_codigo.get() + "'")
+        rows = cursor.fetchall()
+
+        if len(rows) > 0:
+            pet = rows[0]
+            txt_nome_cliente.delete(0, END)
+            txt_nome_cliente.insert(END, pet[1])
+            txt_data_atualizacao.delete(0, END)
+            txt_data_atualizacao.insert(END, pet[2])
+            txt_data_cadastro.delete(0, END)
+            txt_data_cadastro.insert(END, pet[3])
+            txt_cpf.delete(0, END)
+            txt_cpf.insert(END, pet[4])
+            txt_nascimento.delete(0, END)
+            txt_nascimento.insert(END, pet[5])
+            txt_idade.delete(0, END)
+            txt_idade.insert(END, pet[6])
+            txt_telefone.delete(0, END)
+            txt_telefone.insert(END, pet[7])
+            txt_celular.delete(0, END)
+            txt_celular.insert(END, pet[8])
+            txt_cep.delete(0, END)
+            txt_cep.insert(END, pet[9])
+            txt_cidade.delete(0, END)
+            txt_cidade.insert(END, pet[10])
+            txt_bairro.delete(0, END)
+            txt_bairro.insert(END, pet[11])
+            txt_rua.delete(0, END)
+            txt_rua.insert(END, pet[12])
+        else:
+            messagebox.showinfo("ALERTA", "Nenhum registro encontrado para o código informado.")
+        
+        conectar.close()
+
 
 #armazenando imagens nas variaveis
 foto_salvar = PhotoImage(file= r"imgs\salvar-arquivo.png")
@@ -124,16 +241,16 @@ foto_consultar = PhotoImage(file= r"imgs\lupa.png")
 foto_sair = PhotoImage(file= r"imgs\excluir.png")
 
 #criando botoes do crud
-btn_salvar = Button(tela, text="Salvar", image=foto_salvar, compound=TOP)
+btn_salvar = Button(tela, text="Salvar", image=foto_salvar, compound=TOP, command=salvar)
 btn_salvar.place(x=130, y=390)
 
-btn_excluir = Button(tela, text="Excluir", image=foto_excluir, compound=TOP)
+btn_excluir = Button(tela, text="Excluir", image=foto_excluir, compound=TOP, command=excluir)
 btn_excluir.place(x=210, y=390)
 
-btn_alterar = Button(tela, text="Alterar", image=foto_alterar, compound=TOP)
+btn_alterar = Button(tela, text="Alterar", image=foto_alterar, compound=TOP, command=atualizar)
 btn_alterar.place(x=290, y=390)
 
-btn_consultar = Button(tela, text="Consultar", image=foto_consultar, compound=TOP)
+btn_consultar = Button(tela, text="Consultar", image=foto_consultar, compound=TOP, command=Select)
 btn_consultar.place(x=370, y=390)
 
 btn_sair = Button(tela, text="Sair", image=foto_sair, compound=TOP, command=sair_tela)

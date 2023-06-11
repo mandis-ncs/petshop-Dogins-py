@@ -13,6 +13,9 @@ def abrir_tela_clientes():
 def abrir_tela_servicos():
     subprocess.run(["python", "services-registration.py"])
 
+def abrir_tela_agendamento():
+    subprocess.run(["python", "agendar-servico.py"])
+
 def sair_tela():
     tela.destroy()
     return
@@ -66,6 +69,7 @@ foto_sair = PhotoImage(file= r"imgs\sair.png")
 foto_pet = PhotoImage(file= r"imgs\pegada.png")
 foto_dono = PhotoImage(file= r"imgs\owner.png")
 foto_servico = PhotoImage(file= r"imgs\servico.png")
+foto_calendario = PhotoImage(file= r"imgs\calendario.png")
 
 lbl_logo = Label(tela, text="Para pets auudaciosos", compound=TOP, image=foto_logo)
 lbl_logo.place(x=200, y=180)
@@ -79,7 +83,10 @@ btn_dono.place(x=200, y=80)
 btn_servico = Button(tela, text="Cadastrar serviço", image=foto_servico, compound=TOP, command=abrir_tela_servicos)
 btn_servico.place(x=320, y=80)
 
-btn_sair = Button(tela, text="Sair", image=foto_sair, compound=TOP, command=sair_tela)
+btn_sair = Button(tela, text="Agendar serviço", image=foto_calendario, compound=TOP, command=abrir_tela_agendamento)
 btn_sair.place(x=440, y=80)
+
+btn_sair = Button(tela, text="Sair", image=foto_sair, compound=TOP, command=sair_tela)
+btn_sair.place(x=440, y=180)
 
 tela.mainloop()
